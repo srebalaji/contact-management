@@ -10,6 +10,7 @@
   "author": "Srebalaji",
   "license": "ISC",
   "dependencies": {
-    "expressjs": "^1.0.1"
+    "expressjs": "^1.0.1",
+    "mongoose": "^5.5.2"
   }
 }
