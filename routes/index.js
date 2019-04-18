@@ -1,6 +1,7 @@
 const express = require('express')
 
 const contactRouter = require('./contact-routes')
+const contactGroupRouter = require('./contact-group-routes')
 const responseHandler = require('../response-handler')
 
 const router = express.Router()
@@ -13,6 +14,9 @@ router.get('/', responseHandler(() => ({
 
 // Use Contacts routes
 router.use('/contact', contactRouter)
+
+// Use Contact groups routes
+router.use('/group', contactGroupRouter)
 
 // Handle 404
 router.all('*', (req, res) => res.status(404).send({
