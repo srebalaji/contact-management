@@ -1,40 +1,28 @@
-/* eslint-disable func-names */
-/* eslint-disable prefer-arrow-callback */
+
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
+
+const person = require('./person')
 
 const { Schema } = mongoose
 
-const person = new Schema(
-  {
-    type: {
-      type: String,
-      required: [true, 'Contact type is mandatory'],
-    },
-    mobile: {
-      type: String,
-    },
-    email: {
-      type: String,
-    },
-    tag: {
-      type: String,
-      required: [true, 'Contact tag is mandatory'],
-    },
-  },
-)
 
 const contact = new Schema(
   {
     name: {
       type: String,
+      lowercase: true,
       required: [true, 'Contact name is mandatory'],
+      unique: true,
     },
-    contacts: [
+    details: [
       person,
     ],
   },
   { timestamps: true },
 )
 
+
+contact.plugin(uniqueValidator, { message: 'Contact name is already taken' })
 
 module.exports = mongoose.model('contact', contact)
