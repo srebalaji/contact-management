@@ -25,13 +25,29 @@ const person = new Schema(
 )
 
 person.pre('validate', function (next) {
+  // Check for contact type.
   if (this.type !== 'mobile' && this.type !== 'email') {
     next(new Error('Type is invalid'))
   }
-  if (this.type === 'mobile') {
 
+  // Check for contact tag.
+  if (this.tag !== 'personal' && this.tag !== 'work') {
+    next(new Error('Tag is invalid'))
   }
-  // next(new Error('Error from person validation'))
+
+  // Check if contact number is present for contact tag.
+  if (this.type === 'mobile') {
+    if (!this.mobile) {
+      next(new Error('Contact number is not specified'))
+    }
+  }
+
+  // Check if email is present for email tag.
+  if (this.type === 'email') {
+    if (!this.email) {
+      next(new Error('Email is not specified'))
+    }
+  }
   next()
 })
 
