@@ -9,7 +9,7 @@ const responseHandle = cb => (req, res) => {
     .then((response) => {
       const output = {
         success: true,
-        output: response,
+        data: response,
       }
       return res.status(200).send(output)
     })

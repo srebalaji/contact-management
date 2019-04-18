@@ -1,15 +1,18 @@
 const express = require('express')
 
-const Contact = require('../models/contact')
+const contactRouter = require('./contact-routes')
 const responseHandler = require('../response-handler')
 
 const router = express.Router()
 
+// Root path
 router.get('/', responseHandler(() => ({
   project: 'Contact management',
   author: 'Srebalaji',
 })))
 
+// Use Contacts routes
+router.use('/contact', contactRouter)
 
 // Handle 404
 router.all('*', (req, res) => res.status(404).send({
