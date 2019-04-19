@@ -5,6 +5,18 @@ const mongoose = require('mongoose')
 
 const { Schema } = mongoose
 
+// Helper function to validate email
+function validateEmail(email) {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return re.test(String(email).toLowerCase())
+}
+
+// Helper function to validate contact number
+function validateMobile(mobile) {
+  if (String(mobile).length !== 10) return false
+  const re = /^-?\d+\.?\d*$/
+  return re.test(String(mobile).toLowerCase())
+}
 const person = new Schema(
   {
     type: {
@@ -43,13 +55,19 @@ person.pre('validate', function (next) {
       next(new Error('Contact number is not specified'))
       return false
     }
+    if (!validateMobile(this.mobile)) {
+      next(new Error('Contact number is not valid'))
+    }
   }
 
-  // Check if email is present for email tag.
+  // Check if email is present for email tag. And validate email
   if (this.type === 'email') {
     if (!this.email) {
       next(new Error('Email is not specified'))
       return false
+    }
+    if (!validateEmail(this.email)) {
+      next(new Error('Email is not valid'))
     }
   }
   next()
