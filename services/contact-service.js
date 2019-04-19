@@ -10,7 +10,7 @@ const list = async () => {
 const create = async (req) => {
   const contact = new Contact(req.body)
   try {
-    return await contact.save()
+    return contact.save()
   } catch (e) {
     if (e.name === 'ValidationError' && e.message) {
       throw new Error(e.message)
@@ -23,11 +23,17 @@ const create = async (req) => {
 const update = async (req) => {
   if (req.params.id) {
     try {
-      return Contact.findOneAndUpdate(
-        { _id: req.params.id },
-        req.body,
-        { runValidators: true, context: 'query', new: true },
-      )
+      // Update in Mongoose got a bug. So using findById and save.
+      // Refer https://github.com/Automattic/mongoose/issues/5234 and
+      // https://github.com/Automattic/mongoose/issues/5269
+      const doc = await Contact.findById({ _id: req.params.id })
+      if (req.body.name) {
+        doc.name = req.body.name
+      }
+      if (req.body.details) {
+        doc.details = req.body.details
+      }
+      return doc.save()
     } catch (e) {
       if (e.name === 'ValidationError' && e.message) {
         throw new Error(e.message)
@@ -47,7 +53,7 @@ const deleteContact = async (req) => {
       if (e.name === 'ValidationError' && e.message) {
         throw new Error(e.message)
       }
-      throw new Error('Error in updating contact.')
+      throw new Error('Error in deleting contact.')
     }
   }
   throw new Error('No contact id specified')
