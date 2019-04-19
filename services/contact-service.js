@@ -1,8 +1,35 @@
 const Contact = require('../models/contact')
 
 // List all contacts
-const list = async () => {
-  const contacts = Contact.find({}).sort({ createdAt: -1 })
+const list = async (req) => {
+  let contacts = []
+  // Check if search params is present.
+  if (req.query.q) {
+    contacts = await Contact.find({
+      $or: [{
+        name: {
+          $regex: req.query.q,
+          $options: 'i',
+        },
+      }, {
+        'details.email': {
+          $regex: req.query.q,
+          $options: 'i',
+        },
+      }, {
+        'details.mobile': {
+          $regex: req.query.q,
+          $options: 'i',
+        },
+      }],
+    })
+      .sort({
+        createdAt: -1,
+      })
+  } else {
+    contacts = await Contact.find({}).sort({ createdAt: -1 })
+  }
+
   return contacts
 }
 
